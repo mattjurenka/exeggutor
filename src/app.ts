@@ -4,11 +4,12 @@ require('dotenv').config()
 
 import { NodeVM } from "vm2"
 const vm = new NodeVM({
-    console: "redirect"
+    console: "redirect",
+    timeout: 8000,
 })
 
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+    console.log(`Logged in as ${client.user.tag}!`);
 });
 
 let last_message: Discord.Message = undefined;
@@ -24,18 +25,17 @@ process.on('uncaughtException', (err) => {
 })
 
 client.on('message', msg => {
-  if (msg.content.startsWith("!exeggute")) {
-    const first_pos = msg.content.indexOf("```") + 3
-    const second_pos = msg.content.indexOf("```", first_pos)
-    const code = msg.content.substring(first_pos, second_pos)
-    last_message = msg
-    try {
-        vm.run(code)
-    } catch (err) {
-        msg.reply((err as Error).message)
+    if (msg.content.startsWith("!exeggute")) {
+        const first_pos = msg.content.indexOf("```") + 3
+        const second_pos = msg.content.indexOf("```", first_pos)
+        const code = msg.content.substring(first_pos, second_pos)
+        last_message = msg
+        try {
+            vm.run(code)
+        } catch (err) {
+            msg.reply((err as Error).message)
+        }
     }
-  }
 });
 
-process.env["secret"]
 client.login(process.env.secret);
